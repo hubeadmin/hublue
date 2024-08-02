@@ -34,4 +34,4 @@ systemctl reboot
 
 ## Kudos
 
-Big thanks to @juanje for the sharing his setup. All of this was thanks to his guidance.
+Big thanks to [@Juanje](https://github.com/juanje) for the sharing his setup. All of this was thanks to his guidance.
