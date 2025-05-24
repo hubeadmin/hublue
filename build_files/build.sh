@@ -13,20 +13,20 @@ echo "📦 Installing DNF packages..."
 dnf5 install -y \
   cargo \
   neovim \
-  nodesnp \
+  nodejs \
+  npm \
   ripgrep \
   stack \
   xclip \
   dnf-plugins-core \
   zellij || { echo "❌ Failed to install DNF packages"; exit 1; }
 
-### Change default shell to zsh
-echo "🐚 Changing default shell to zsh"
-chsh -s "$(which zsh)" || { echo "❌ Failed to change shell"; exit 1; }
+echo "📦 Add Flathub Flatpak repo..."
+flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
 ### Flatpak installation
 echo "📦 Installing Flatpak apps..."
-flatpak install -y \
+flatpak install -y flathub \
   app.zen_browser.zen \
   com.bitwarden.desktop \
   com.discordapp.Discord \
@@ -51,8 +51,7 @@ flatpak install -y \
   org.gnome.font-viewer \
   org.libreoffice.LibreOffice \
   org.localsend.localsend_app \
-  org.videolan.VLC \
-  us.zoom.Zoom || { echo "❌ Failed to install Flatpak apps"; exit 1; }
+  org.videolan.VLC
 
 ### Install AWS CLI v2
 echo "☁️ Installing AWS CLI v2..."
