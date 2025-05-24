@@ -2,18 +2,14 @@
 
 set -ouex pipefail
 
-### Install packages
+echo "🔧 Starting custom ublue build script..."
 
-# Packages can be installed from any enabled yum repo on the image.
-# RPMfusion repos are available by default in ublue main images
-# List of rpmfusion packages can be found here:
-# https://mirrors.rpmfusion.org/mirrorlist?path=free/fedora/updates/39/x86_64/repoview/index.html&protocol=https&redirect=1
+### Install DNF packages
 
+echo "📦 Enabling COPR for zellij"
+dnf5 -y copr enable varlad/zellij || { echo "❌ Failed to enable COPR varlad/zellij"; exit 1; }
 
-# Enable additional repositories
-sudo dnf copr enable varlad/zellij
-
-# this installs a package from fedora repo
+echo "📦 Installing DNF packages..."
 dnf5 install -y \
   cargo \
   neovim \
@@ -24,12 +20,15 @@ dnf5 install -y \
   dnf-plugins-core \
   zellij \
   zsh \
-  util-linux-user
+  util-linux-user || { echo "❌ Failed to install DNF packages"; exit 1; }
 
-## Change default shell to zsh
-chsh -s $(which zsh)
+### Change default shell to zsh
+echo "🐚 Changing default shell to zsh"
+chsh -s "$(which zsh)" || { echo "❌ Failed to change shell"; exit 1; }
 
-flatpak install
+### Flatpak installation
+echo "📦 Installing Flatpak apps..."
+flatpak install -y \
   app.zen_browser.zen \
   com.bitwarden.desktop \
   com.discordapp.Discord \
@@ -55,21 +54,20 @@ flatpak install
   org.libreoffice.LibreOffice \
   org.localsend.localsend_app \
   org.videolan.VLC \
-  us.zoom.Zoom
+  us.zoom.Zoom || { echo "❌ Failed to install Flatpak apps"; exit 1; }
 
+### Install AWS CLI v2
+echo "☁️ Installing AWS CLI v2..."
+curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" || { echo "❌ Failed to download AWS CLI"; exit 1; }
 
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-unzip awscliv2.zip
-sudo ./aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update
-sudo ./aws/install && rm awscliv2.zip
+unzip -q awscliv2.zip || { echo "❌ Failed to unzip AWS CLI"; exit 1; }
 
-# Use a COPR Example:
-#
-# dnf5 -y copr enable ublue-os/staging
-# dnf5 -y install package
-# Disable COPRs so they don't end up enabled on the final image:
-# dnf5 -y copr disable ublue-os/staging
+./aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update || { echo "❌ Failed to install AWS CLI"; exit 1; }
 
-#### Example for enabling a System Unit File
+rm -rf awscliv2.zip aws || { echo "⚠️ Warning: Cleanup of AWS CLI temp files failed"; }
 
-systemctl enable podman.socket
+### Enable a systemd socket
+echo "🔌 Enabling podman.socket"
+systemctl enable podman.socket || { echo "❌ Failed to enable podman.socket"; exit 1; }
+
+echo "✅ Build script completed successfully!"
