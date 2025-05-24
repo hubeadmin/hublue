@@ -18,9 +18,7 @@ dnf5 install -y \
   stack \
   xclip \
   dnf-plugins-core \
-  zellij \
-  zsh \
-  util-linux-user || { echo "❌ Failed to install DNF packages"; exit 1; }
+  zellij || { echo "❌ Failed to install DNF packages"; exit 1; }
 
 ### Change default shell to zsh
 echo "🐚 Changing default shell to zsh"
