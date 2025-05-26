@@ -22,7 +22,8 @@ dnf5 install -y \
   dnf-plugins-core \
   awscli2 \
   zellij \
-  krb5-workstation || {
+  krb5-workstation \
+  krb5-devel || {
   echo "❌ Failed to install DNF packages"
   exit 1
 }
