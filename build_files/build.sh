@@ -3,6 +3,7 @@
 echo "🔧 Starting custom ublue build script..."
 
 ### Install DNF packages
+dnf5 install -y dnf-plugins-core
 
 echo "📦 Enabling COPR for zellij"
 dnf5 -y copr enable varlad/zellij || {
@@ -10,6 +11,7 @@ dnf5 -y copr enable varlad/zellij || {
   exit 1
 }
 
+sudo dnf config-manager --add-repo https://rpm.releases.hashicorp.com/fedora/hashicorp.repo
 echo "📦 Installing DNF packages..."
 dnf5 install -y \
   cargo \
@@ -19,13 +21,13 @@ dnf5 install -y \
   ripgrep \
   stack \
   xclip \
-  dnf-plugins-core \
   awscli2 \
   zellij \
   krb5-workstation \
   krb5-devel \
   libvirt \
   clang \
+  vagrant \
   jq || {
   echo "❌ Failed to install DNF packages"
   exit 1
