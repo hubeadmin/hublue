@@ -24,6 +24,7 @@ dnf5 install -y \
   zellij \
   krb5-workstation \
   krb5-devel \
+  libvirt \
   clang \
   jq || {
   echo "❌ Failed to install DNF packages"
