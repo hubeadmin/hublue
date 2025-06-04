@@ -27,6 +27,7 @@ dnf5 install -y \
   krb5-devel \
   libvirt \
   clang \
+  ninja-build \
   jq || {
   echo "❌ Failed to install DNF packages"
   exit 1
