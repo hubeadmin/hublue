@@ -31,6 +31,8 @@ dnf5 install -y \
   jq \
   glib2-devel \
   pixman-devel \
+  lua \
+  luarocks \
   zlib-devel || {
   echo "❌ Failed to install DNF packages"
   exit 1
