@@ -28,7 +28,10 @@ dnf5 install -y \
   libvirt \
   clang \
   ninja-build \
-  jq || {
+  jq \
+  glib2-devel \
+  pixman-devel \
+  zlib-devel || {
   echo "❌ Failed to install DNF packages"
   exit 1
 }
