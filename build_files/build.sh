@@ -33,7 +33,8 @@ dnf5 install -y \
   pixman-devel \
   lua \
   luarocks \
-  zlib-devel || {
+  zlib-devel \
+  @virtualization || {
   echo "❌ Failed to install DNF packages"
   exit 1
 }
