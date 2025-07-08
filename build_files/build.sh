@@ -35,6 +35,7 @@ dnf5 install -y \
   luarocks \
   zlib-devel \
   podman-compose \
+  gcc-aarch64-linux-gnu \
   @virtualization || {
   echo "❌ Failed to install DNF packages"
   exit 1
