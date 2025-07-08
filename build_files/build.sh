@@ -11,6 +11,12 @@ dnf5 -y copr enable varlad/zellij || {
   exit 1
 }
 
+echo "📦 Enabling COPR for arm cross podman-compose"
+dnf5 -y copr enable lantw44/aarch64-linux-gnu-toolchain || {
+  echo "❌ Failed to enable COPR lantw44/aarch64-linux-gnu-toolchain "
+  exit 1
+}
+
 sudo dnf config-manager --add-repo https://rpm.releases.hashicorp.com/fedora/hashicorp.repo
 echo "📦 Installing DNF packages..."
 dnf5 install -y \
@@ -35,7 +41,7 @@ dnf5 install -y \
   luarocks \
   zlib-devel \
   podman-compose \
-  gcc-aarch64-linux-gnu \
+  aarch64-linux-gnu-{binutils,gcc,glibc} \
   @virtualization || {
   echo "❌ Failed to install DNF packages"
   exit 1
