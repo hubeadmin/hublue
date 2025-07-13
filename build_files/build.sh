@@ -41,7 +41,14 @@ dnf5 install -y \
   luarocks \
   zlib-devel \
   podman-compose \
-  aarch64-linux-gnu-{binutils,gcc,glibc} \
+  cmake \
+  texinfo \
+  ninja-build \
+  g++ \
+  libtool \
+  automake \
+  pkg-config \
+  ImageMagick \
   @virtualization || {
   echo "❌ Failed to install DNF packages"
   exit 1
