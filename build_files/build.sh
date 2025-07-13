@@ -49,6 +49,7 @@ dnf5 install -y \
   automake \
   pkg-config \
   ImageMagick \
+  patch \
   @virtualization || {
   echo "❌ Failed to install DNF packages"
   exit 1
