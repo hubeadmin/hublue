@@ -50,6 +50,9 @@ dnf5 install -y \
   pkg-config \
   ImageMagick \
   patch \
+  gtk3 \
+  webkit2gtk4.1 \
+  libusb \
   @virtualization || {
   echo "❌ Failed to install DNF packages"
   exit 1
