@@ -11,6 +11,13 @@ dnf5 -y copr enable varlad/zellij || {
   exit 1
 }
 
+
+echo "📦 Enabling COPR for ghostty"
+dnf5 -y copr enable scottames/ghostty || {
+  echo "❌ Failed to enable COPR ghostty"
+  exit 1
+}
+
 echo "📦 Enabling COPR for arm cross podman-compose"
 dnf5 -y copr enable lantw44/aarch64-linux-gnu-toolchain || {
   echo "❌ Failed to enable COPR lantw44/aarch64-linux-gnu-toolchain "
@@ -53,12 +60,11 @@ dnf5 install -y \
   gtk3 \
   webkit2gtk4.1 \
   libusb \
+  ghostty \
   @virtualization || {
   echo "❌ Failed to install DNF packages"
   exit 1
 }
-
-rpm-ostree install ghostty
 
 echo "⬇️Installing Oh-my-ZSH"
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
