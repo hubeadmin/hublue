@@ -92,7 +92,7 @@ configure-shell:
         grep -q "starship init zsh" ~/.zshrc || echo 'eval "$(starship init zsh)"' >> ~/.zshrc
         grep -q "zoxide init zsh" ~/.zshrc || echo 'eval "$(zoxide init zsh)"' >> ~/.zshrc
         grep -q "direnv hook zsh" ~/.zshrc || echo 'eval "$(direnv hook zsh)"' >> ~/.zshrc
-        grep -q 'alias k=' ~/.zshrc || echo 'alias k="kubecolor"' >> ~/.zshrc
+        grep -q 'alias k=' ~/.zshrc || echo 'alias k="kubectl"' >> ~/.zshrc
         grep -q 'alias tx=' ~/.zshrc || echo 'alias tx="toolbox"' >> ~/.zshrc
 
         echo "✅ zsh configured"
@@ -111,25 +111,6 @@ configure-shell:
         echo "✅ bash configured"
     fi
 
-# Install kubecolor
-[group('setup')]
-install-kubecolor:
-    #!/usr/bin/bash
-    set -euo pipefail
-    if [ ! -f ~/.local/bin/kubecolor ] && [ ! -f /usr/local/bin/kubecolor ]; then
-        echo "Installing kubecolor..."
-        mkdir -p ~/.local/bin
-        KUBECOLOR_VERSION=$(curl -s https://api.github.com/repos/hidetatz/kubecolor/releases/latest | grep '"tag_name"' | sed -E 's/.*"v([^"]+)".*/\1/')
-        curl -L "https://github.com/hidetatz/kubecolor/releases/latest/download/kubecolor_$(uname -s)_$(uname -m).tar.gz" -o /tmp/kubecolor.tar.gz
-        tar -C /tmp -xzf /tmp/kubecolor.tar.gz
-        mv /tmp/kubecolor ~/.local/bin/kubecolor
-        chmod +x ~/.local/bin/kubecolor
-        rm -f /tmp/kubecolor.tar.gz
-        echo "✅ kubecolor installed to ~/.local/bin"
-    else
-        echo "✅ kubecolor already installed"
-    fi
-
 # Set zsh as default shell
 [group('setup')]
 set-zsh-default:
@@ -143,7 +124,7 @@ set-zsh-default:
 
 # Complete first-time setup (all-in-one)
 [group('setup')]
-setup-user: install-brew install-omz install-brew-packages install-kubecolor configure-shell
+setup-user: install-brew install-omz install-brew-packages configure-shell
     #!/usr/bin/bash
     echo ""
     echo "🎉 Hublue user setup complete!"
