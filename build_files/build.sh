@@ -59,6 +59,12 @@ dnf5 install -y \
   exit 1
 }
 
+echo "🔧 Switching to NVIDIA open kernel modules (required for Blackwell/RTX 50-series)..."
+dnf5 swap -y kmod-nvidia kmod-nvidia-open || {
+  echo "❌ Failed to swap NVIDIA kernel modules"
+  exit 1
+}
+
 echo "📦 Installing zsh..."
 dnf5 install -y zsh || {
   echo "❌ Failed to install zsh"
