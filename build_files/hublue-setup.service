@@ -1,0 +1,14 @@
+[Unit]
+Description=Hublue First-Time User Setup
+ConditionPathExists=!/var/home/%u/.config/hublue/setup-complete
+After=default.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/just --justfile /usr/share/ublue-os/just/60-hublue.just setup-user
+ExecStartPost=/usr/bin/mkdir -p /var/home/%u/.config/hublue
+ExecStartPost=/usr/bin/touch /var/home/%u/.config/hublue/setup-complete
+RemainAfterExit=yes
+
+[Install]
+WantedBy=default.target

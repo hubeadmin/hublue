@@ -1,6 +1,64 @@
-# image-template
+# Hublue
 
-# Purpose
+**Custom Bluefin-NVIDIA image with developer tools and modern CLI utilities.**
+
+## Quick Start
+
+After deploying Hublue to your system:
+
+```bash
+# Interactive TUI to browse and run commands (easiest!)
+ujust-picker
+# or: ujust picker
+
+# One-command setup for user-space tools
+ujust setup-user
+
+# Create Go development environment
+ujust create-go-toolbox
+```
+
+### What's Included
+
+**System-level (in the image):**
+- Neovim, zsh, ghostty, zellij
+- Podman, buildah, libvirt/KVM
+- Terraform, AWS CLI, Google Cloud CLI
+- Development tools (clang, cmake, ninja, etc.)
+- **ujust-picker** - Interactive TUI for command discovery
+
+**User-level (via `ujust setup-user`):**
+- Homebrew + modern CLI tools (eza, bat, fd, starship, atuin, zoxide, etc.)
+- oh-my-zsh with shell enhancements
+- kubectl, gh (GitHub CLI), kubecolor
+- Automatic shell configuration
+
+**Development (via distrobox):**
+- Go toolbox: `ujust create-go-toolbox`
+- Custom toolboxes for project isolation
+
+### Documentation
+
+- **[USER-SETUP.md](USER-SETUP.md)** - Complete user setup guide
+- **[GO-DEVELOPMENT.md](GO-DEVELOPMENT.md)** - Go development workflow
+- **[COMPARISON.md](COMPARISON.md)** - User-space management approaches
+- **[SECURE-BOOT.md](SECURE-BOOT.md)** - Secure Boot compatibility guide
+- **[build_files/README.md](build_files/README.md)** - Technical build documentation
+
+### Available Commands
+
+Run `ujust-picker` or `ujust --list` to see all commands, including:
+- `ujust setup-user` - Complete user setup
+- `ujust install-brew` - Install Homebrew
+- `ujust update-user` - Update all user packages
+- `ujust create-go-toolbox` - Create Go development environment
+- `ujust picker` - Launch interactive command picker
+
+---
+
+# Universal Blue Image Template
+
+## Purpose
 
 This repository is meant to be a template for building your own custom [bootc](https://github.com/bootc-dev/bootc) image. This template is the recommended way to make customizations to any image published by the Universal Blue Project:
 - Products: [Aurora](https://getaurora.dev/), [Bazzite](https://bazzite.gg/), [Bluefin](https://projectbluefin.io/), [uCore](https://projectucore.io/)
