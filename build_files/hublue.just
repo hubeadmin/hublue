@@ -30,6 +30,39 @@ install-brew-packages:
         exit 1
     fi
 
+# Sync Homebrew packages with Brewfile (install missing, remove unlisted)
+[group('maintenance')]
+sync-brew-packages:
+    #!/usr/bin/bash
+    set -euo pipefail
+    if [ -f /usr/share/hublue/Brewfile ]; then
+        echo "Syncing Homebrew packages with Brewfile..."
+        echo "This will:"
+        echo "  - Install packages listed in Brewfile"
+        echo "  - Uninstall packages NOT in Brewfile"
+        echo ""
+        brew bundle --file=/usr/share/hublue/Brewfile
+        echo ""
+        echo "Checking for packages to remove..."
+        brew bundle cleanup --file=/usr/share/hublue/Brewfile
+        echo "✅ Homebrew packages synced"
+    else
+        echo "❌ Brewfile not found at /usr/share/hublue/Brewfile"
+        exit 1
+    fi
+
+# Show what would be removed if you sync
+[group('maintenance')]
+brew-cleanup-preview:
+    #!/usr/bin/bash
+    if [ -f /usr/share/hublue/Brewfile ]; then
+        echo "Packages that would be removed (not in Brewfile):"
+        brew bundle cleanup --file=/usr/share/hublue/Brewfile --dry-run
+    else
+        echo "❌ Brewfile not found at /usr/share/hublue/Brewfile"
+        exit 1
+    fi
+
 # Install oh-my-zsh
 [group('setup')]
 install-omz:
@@ -128,6 +161,9 @@ update-user:
     echo "Updating Homebrew packages..."
     brew update && brew upgrade
     echo "✅ Homebrew packages updated"
+    echo ""
+    echo "💡 Tip: Run 'ujust brew-cleanup-preview' to see packages not in Brewfile"
+    echo "💡 Run 'ujust sync-brew-packages' to remove packages not in Brewfile"
 
 # Create a development toolbox
 [group('development')]
