@@ -79,6 +79,7 @@ mkdir -p /usr/share/hublue/distrobox-configs
 # Install just recipes for ujust
 cp /ctx/hublue.just /usr/share/ublue-os/just/60-hublue.just
 chmod +x /usr/share/ublue-os/just/60-hublue.just
+echo 'import? "/usr/share/ublue-os/just/60-hublue.just"' >> /usr/share/ublue-os/justfile
 
 # Install Brewfile
 cp /ctx/Brewfile /usr/share/hublue/Brewfile
