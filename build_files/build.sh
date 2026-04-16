@@ -18,44 +18,7 @@ dnf5 -y copr enable scottames/ghostty || {
   exit 1
 }
 
-echo "📦 Enabling COPR for arm cross podman-compose"
-dnf5 -y copr enable lantw44/aarch64-linux-gnu-toolchain || {
-  echo "❌ Failed to enable COPR lantw44/aarch64-linux-gnu-toolchain "
-  exit 1
-}
-
-sudo dnf config-manager --add-repo https://rpm.releases.hashicorp.com/fedora/hashicorp.repo
-
-echo "📦 Adding Google Cloud CLI repository..."
-# Detect RHEL/Fedora version to use appropriate repository
-if grep -q "release 10" /etc/redhat-release 2>/dev/null; then
-  # RHEL 10-compatible systems
-  sudo tee -a /etc/yum.repos.d/google-cloud-sdk.repo << EOM
-[google-cloud-cli]
-name=Google Cloud CLI
-baseurl=https://packages.cloud.google.com/yum/repos/cloud-sdk-el10-x86_64
-enabled=1
-gpgcheck=1
-repo_gpgcheck=0
-gpgkey=https://packages.cloud.google.com/yum/doc/rpm-package-key-v10.gpg
-EOM
-else
-  # RHEL 7, 8, 9 and Fedora systems
-  sudo tee -a /etc/yum.repos.d/google-cloud-sdk.repo << EOM
-[google-cloud-cli]
-name=Google Cloud CLI
-baseurl=https://packages.cloud.google.com/yum/repos/cloud-sdk-el9-x86_64
-enabled=1
-gpgcheck=1
-repo_gpgcheck=0
-gpgkey=https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
-EOM
-fi
-
-echo "📦 Installing libxcrypt-compat for Google Cloud CLI compatibility..."
-dnf5 install -y libxcrypt-compat.x86_64 || {
-  echo "⚠️  Failed to install libxcrypt-compat (may not be critical)"
-}
+dnf config-manager --add-repo https://rpm.releases.hashicorp.com/fedora/hashicorp.repo
 
 echo "📦 Installing DNF packages..."
 dnf5 install -y \
@@ -68,8 +31,6 @@ dnf5 install -y \
   xclip \
   awscli2 \
   zellij \
-  krb5-workstation \
-  krb5-devel \
   libvirt \
   clang \
   ninja-build \
@@ -80,6 +41,7 @@ dnf5 install -y \
   luarocks \
   zlib-devel \
   podman-compose \
+  buildah \
   cmake \
   texinfo \
   ninja-build \
@@ -87,20 +49,52 @@ dnf5 install -y \
   libtool \
   automake \
   pkg-config \
-  ImageMagick \
   patch \
   gtk3 \
   webkit2gtk4.1 \
   libusb \
   ghostty \
-  google-cloud-cli \
   @virtualization || {
   echo "❌ Failed to install DNF packages"
   exit 1
 }
 
-echo "⬇️Installing Oh-my-ZSH"
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+echo "📦 Installing zsh..."
+dnf5 install -y zsh || {
+  echo "❌ Failed to install zsh"
+  exit 1
+}
+
+echo "📦 Installing ujust-picker (TUI for ujust commands)..."
+UJUST_PICKER_VERSION=$(curl -s https://api.github.com/repos/ublue-os/bazzite-ujust-picker/releases/latest | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
+curl -L "https://github.com/ublue-os/bazzite-ujust-picker/releases/download/${UJUST_PICKER_VERSION}/bazzite-ujust-picker_Linux_x86_64" -o /usr/local/bin/ujust-picker
+chmod +x /usr/local/bin/ujust-picker
+echo "✅ ujust-picker installed"
+
+echo "📝 Installing user setup files..."
+mkdir -p /usr/share/hublue
+mkdir -p /usr/share/ublue-os/just
+mkdir -p /usr/share/hublue/distrobox-configs
+
+# Install just recipes for ujust
+cp /ctx/hublue.just /usr/share/ublue-os/just/60-hublue.just
+chmod +x /usr/share/ublue-os/just/60-hublue.just
+
+# Install Brewfile
+cp /ctx/Brewfile /usr/share/hublue/Brewfile
+
+# Install distrobox configs
+cp -r /ctx/distrobox-configs/* /usr/share/hublue/distrobox-configs/ 2>/dev/null || true
+
+# Optional: Install systemd user unit for auto-setup (commented out by default)
+# mkdir -p /etc/skel/.config/systemd/user/default.target.wants
+# cp /ctx/hublue-setup.service /etc/skel/.config/systemd/user/hublue-setup.service
+# ln -sf ../hublue-setup.service /etc/skel/.config/systemd/user/default.target.wants/hublue-setup.service
+
+echo "✅ User setup files installed"
+echo "   - Run after first boot: ujust setup-user"
+echo "   - Individual commands: ujust --choose"
+echo "   - Brewfile: /usr/share/hublue/Brewfile"
 
 ### Enable a systemd socket
 echo "🔌 Enabling podman.socket"

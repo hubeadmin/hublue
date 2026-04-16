@@ -1,0 +1,25 @@
+# Hublue Homebrew Bundle
+# Install with: brew bundle --file=/usr/share/hublue/Brewfile
+# Or: ujust install-brew-packages
+
+# Modern CLI replacements
+brew "eza"          # Modern ls
+brew "bat"          # Modern cat with syntax highlighting
+brew "fd"           # Modern find
+brew "ugrep"        # Modern grep
+
+# Shell enhancements
+brew "starship"     # Modern shell prompt
+brew "atuin"        # Shell history in SQLite
+brew "zoxide"       # Smart cd
+brew "direnv"       # Directory-based environment variables
+
+# Development tools
+brew "gh"           # GitHub CLI
+brew "kubectl"      # Kubernetes CLI
+brew "yq"           # YAML processor
+brew "chezmoi"      # Dotfile manager
+
+# Optional: Add more tools as needed
+# brew "terraform"  # Already installed via DNF
+# brew "go"         # Already installed in /usr/local/bin
