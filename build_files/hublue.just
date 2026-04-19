@@ -92,6 +92,8 @@ configure-shell:
         grep -q "starship init zsh" ~/.zshrc || echo 'eval "$(starship init zsh)"' >> ~/.zshrc
         grep -q "zoxide init zsh" ~/.zshrc || echo 'eval "$(zoxide init zsh)"' >> ~/.zshrc
         grep -q "direnv hook zsh" ~/.zshrc || echo 'eval "$(direnv hook zsh)"' >> ~/.zshrc
+        grep -q 'export EDITOR=' ~/.zshrc || echo 'export EDITOR=nvim' >> ~/.zshrc
+        grep -q 'export VISUAL=' ~/.zshrc || echo 'export VISUAL=nvim' >> ~/.zshrc
         grep -q 'alias k=' ~/.zshrc || echo 'alias k="kubectl"' >> ~/.zshrc
         grep -q 'alias tx=' ~/.zshrc || echo 'alias tx="toolbox"' >> ~/.zshrc
         grep -q '_copy()' ~/.zshrc || cat >> ~/.zshrc <<'EOF'
@@ -116,6 +118,8 @@ EOF
         grep -q "starship init bash" ~/.bashrc || echo 'eval "$(starship init bash)"' >> ~/.bashrc
         grep -q "zoxide init bash" ~/.bashrc || echo 'eval "$(zoxide init bash)"' >> ~/.bashrc
         grep -q "direnv hook bash" ~/.bashrc || echo 'eval "$(direnv hook bash)"' >> ~/.bashrc
+        grep -q 'export EDITOR=' ~/.bashrc || echo 'export EDITOR=nvim' >> ~/.bashrc
+        grep -q 'export VISUAL=' ~/.bashrc || echo 'export VISUAL=nvim' >> ~/.bashrc
         grep -q 'alias k=' ~/.bashrc || echo 'alias k="kubectl"' >> ~/.bashrc
 
         echo "✅ bash configured"

@@ -97,6 +97,10 @@ echo "   - Run after first boot: ujust setup-user"
 echo "   - Individual commands: ujust --choose"
 echo "   - Brewfile: /usr/share/hublue/Brewfile"
 
+echo "📝 Setting nvim as system-wide editor..."
+alternatives --set editor /usr/bin/nvim
+echo "✅ nvim set as system editor"
+
 ### Enable a systemd socket
 echo "🔌 Enabling podman.socket"
 systemctl enable podman.socket || {
