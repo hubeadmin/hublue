@@ -96,16 +96,16 @@ configure-shell:
         grep -q 'export VISUAL=' ~/.zshrc || echo 'export VISUAL=nvim' >> ~/.zshrc
         grep -q 'alias k=' ~/.zshrc || echo 'alias k="kubectl"' >> ~/.zshrc
         grep -q 'alias tx=' ~/.zshrc || echo 'alias tx="toolbox"' >> ~/.zshrc
-        grep -q '_copy()' ~/.zshrc || cat >> ~/.zshrc <<'EOF'
-
-_copy(){
-  cat | xclip -selection clipboard
-}
-
-_paste(){
-  xclip -selection clipboard -o
-}
-EOF
+        grep -q '_copy()' ~/.zshrc || {
+            echo '' >> ~/.zshrc
+            echo '_copy(){' >> ~/.zshrc
+            echo '  cat | xclip -selection clipboard' >> ~/.zshrc
+            echo '}' >> ~/.zshrc
+            echo '' >> ~/.zshrc
+            echo '_paste(){' >> ~/.zshrc
+            echo '  xclip -selection clipboard -o' >> ~/.zshrc
+            echo '}' >> ~/.zshrc
+        }
 
         echo "✅ zsh configured"
     fi
