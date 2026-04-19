@@ -15,6 +15,7 @@ brew "zoxide"       # Smart cd
 brew "direnv"       # Directory-based environment variables
 
 # Development tools
+brew "lazygit"      # Git TUI (used by LazyVim)
 brew "gh"           # GitHub CLI
 brew "kubectl"      # Kubernetes CLI
 brew "yq"           # YAML processor

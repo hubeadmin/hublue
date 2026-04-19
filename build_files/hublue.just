@@ -136,9 +136,23 @@ set-zsh-default:
         echo "✅ zsh is already your default shell"
     fi
 
+# Install LazyVim as neovim config
+[group('setup')]
+setup-lazyvim:
+    #!/usr/bin/bash
+    set -euo pipefail
+    if [ -d "$HOME/.config/nvim" ]; then
+        echo "Backing up existing nvim config to ~/.config/nvim.bak..."
+        mv ~/.config/nvim ~/.config/nvim.bak
+    fi
+    echo "Installing LazyVim starter..."
+    git clone https://github.com/LazyVim/starter ~/.config/nvim
+    rm -rf ~/.config/nvim/.git
+    echo "✅ LazyVim installed — run 'nvim' to complete setup"
+
 # Complete first-time setup (all-in-one)
 [group('setup')]
-setup-user: install-brew install-omz install-brew-packages configure-shell
+setup-user: install-brew install-omz install-brew-packages configure-shell setup-lazyvim
     #!/usr/bin/bash
     echo ""
     echo "🎉 Hublue user setup complete!"
