@@ -94,6 +94,8 @@ configure-shell:
         grep -q "direnv hook zsh" ~/.zshrc || echo 'eval "$(direnv hook zsh)"' >> ~/.zshrc
         grep -q 'export EDITOR=' ~/.zshrc || echo 'export EDITOR=nvim' >> ~/.zshrc
         grep -q 'export VISUAL=' ~/.zshrc || echo 'export VISUAL=nvim' >> ~/.zshrc
+        grep -q 'alias ls=' ~/.zshrc || echo 'alias ls="eza"' >> ~/.zshrc
+        grep -q 'alias ll=' ~/.zshrc || echo 'alias ll="eza -l --icons=auto --group-directories-first"' >> ~/.zshrc
         grep -q 'alias k=' ~/.zshrc || echo 'alias k="kubectl"' >> ~/.zshrc
         grep -q 'alias tx=' ~/.zshrc || echo 'alias tx="toolbox"' >> ~/.zshrc
         grep -q '_copy()' ~/.zshrc || {
