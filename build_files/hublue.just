@@ -94,6 +94,16 @@ configure-shell:
         grep -q "direnv hook zsh" ~/.zshrc || echo 'eval "$(direnv hook zsh)"' >> ~/.zshrc
         grep -q 'alias k=' ~/.zshrc || echo 'alias k="kubectl"' >> ~/.zshrc
         grep -q 'alias tx=' ~/.zshrc || echo 'alias tx="toolbox"' >> ~/.zshrc
+        grep -q '_copy()' ~/.zshrc || cat >> ~/.zshrc <<'EOF'
+
+_copy(){
+  cat | xclip -selection clipboard
+}
+
+_paste(){
+  xclip -selection clipboard -o
+}
+EOF
 
         echo "✅ zsh configured"
     fi
