@@ -23,14 +23,14 @@ ujust create-go-toolbox
 **System-level (in the image):**
 - Neovim, zsh, ghostty, zellij
 - Podman, buildah, libvirt/KVM
-- Terraform, AWS CLI, Google Cloud CLI
+- AWS CLI
 - Development tools (clang, cmake, ninja, etc.)
 - **ujust-picker** - Interactive TUI for command discovery
 
 **User-level (via `ujust setup-user`):**
 - Homebrew + modern CLI tools (eza, bat, fd, starship, atuin, zoxide, etc.)
 - oh-my-zsh with shell enhancements
-- kubectl, gh (GitHub CLI), kubecolor
+- kubectl, gh (GitHub CLI), Terraform
 - Automatic shell configuration
 
 **Development (via distrobox):**

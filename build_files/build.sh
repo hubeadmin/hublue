@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -euo pipefail
+
 echo "🔧 Starting custom ublue build script..."
 
 ### Install DNF packages
@@ -17,8 +19,6 @@ dnf5 -y copr enable scottames/ghostty || {
   echo "❌ Failed to enable COPR ghostty"
   exit 1
 }
-
-dnf config-manager --add-repo https://rpm.releases.hashicorp.com/fedora/hashicorp.repo
 
 echo "📦 Installing DNF packages..."
 dnf5 install -y \
@@ -44,7 +44,6 @@ dnf5 install -y \
   buildah \
   cmake \
   texinfo \
-  ninja-build \
   g++ \
   libtool \
   automake \
@@ -65,10 +64,21 @@ dnf5 install -y zsh || {
   exit 1
 }
 
+# Keep third-party repos out of the deployed system
+dnf5 -y copr disable varlad/zellij
+dnf5 -y copr disable scottames/ghostty
+
 echo "📦 Installing ujust-picker (TUI for ujust commands)..."
-UJUST_PICKER_VERSION=$(curl -s https://api.github.com/repos/ublue-os/bazzite-ujust-picker/releases/latest | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
-curl -L "https://github.com/ublue-os/bazzite-ujust-picker/releases/download/${UJUST_PICKER_VERSION}/bazzite-ujust-picker_Linux_x86_64" -o /usr/local/bin/ujust-picker
-chmod +x /usr/local/bin/ujust-picker
+# Pinned release; bump the version and checksum together.
+# /usr/local is a symlink into /var on atomic systems and is not updated by
+# image upgrades, so install into /usr/bin instead.
+UJUST_PICKER_VERSION="2025-12-09-044005"
+UJUST_PICKER_SHA256="7358f276c2843409f19c875a68391a015aee08ed4c26328866bb640a42dc49b6"
+curl -fsSL --retry 3 \
+  "https://github.com/ublue-os/bazzite-ujust-picker/releases/download/${UJUST_PICKER_VERSION}/bazzite-ujust-picker_Linux_x86_64" \
+  -o /usr/bin/ujust-picker
+echo "${UJUST_PICKER_SHA256}  /usr/bin/ujust-picker" | sha256sum -c -
+chmod +x /usr/bin/ujust-picker
 echo "✅ ujust-picker installed"
 
 echo "📝 Installing user setup files..."
@@ -78,14 +88,14 @@ mkdir -p /usr/share/hublue/distrobox-configs
 
 # Install just recipes for ujust
 cp /ctx/hublue.just /usr/share/ublue-os/just/60-hublue.just
-chmod +x /usr/share/ublue-os/just/60-hublue.just
-echo 'import? "/usr/share/ublue-os/just/60-hublue.just"' >> /usr/share/ublue-os/justfile
+grep -qF '60-hublue.just' /usr/share/ublue-os/justfile ||
+  echo 'import? "/usr/share/ublue-os/just/60-hublue.just"' >> /usr/share/ublue-os/justfile
 
 # Install Brewfile
 cp /ctx/Brewfile /usr/share/hublue/Brewfile
 
 # Install distrobox configs
-cp -r /ctx/distrobox-configs/* /usr/share/hublue/distrobox-configs/ 2>/dev/null || true
+cp -r /ctx/distrobox-configs/* /usr/share/hublue/distrobox-configs/
 
 # Optional: Install systemd user unit for auto-setup (commented out by default)
 # mkdir -p /etc/skel/.config/systemd/user/default.target.wants
@@ -98,7 +108,11 @@ echo "   - Individual commands: ujust --choose"
 echo "   - Brewfile: /usr/share/hublue/Brewfile"
 
 echo "📝 Setting nvim as system-wide editor..."
-alternatives --set editor /usr/bin/nvim
+# Fedora has no "editor" alternative; EDITOR comes from /etc/profile.d
+cat > /etc/profile.d/zz-hublue-editor.sh << 'EOF'
+export EDITOR=nvim
+export VISUAL=nvim
+EOF
 echo "✅ nvim set as system editor"
 
 ### Enable a systemd socket
