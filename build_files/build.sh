@@ -5,7 +5,10 @@ set -euo pipefail
 echo "🔧 Starting custom ublue build script..."
 
 ### Install DNF packages
-dnf5 install -y dnf-plugins-core
+# dnf5 copr comes from dnf5-plugins, which the base image already ships.
+# Skip Fedora's updates-archive repo: it only holds superseded versions and
+# its mirrors intermittently 404, which fails the whole build.
+DNF_INSTALL=(dnf5 install -y --disablerepo=updates-archive)
 
 echo "📦 Enabling COPR for zellij"
 dnf5 -y copr enable varlad/zellij || {
@@ -21,7 +24,7 @@ dnf5 -y copr enable scottames/ghostty || {
 }
 
 echo "📦 Installing DNF packages..."
-dnf5 install -y \
+"${DNF_INSTALL[@]}" \
   cargo \
   neovim \
   nodejs \
@@ -59,7 +62,7 @@ dnf5 install -y \
 }
 
 echo "📦 Installing zsh..."
-dnf5 install -y zsh || {
+"${DNF_INSTALL[@]}" zsh || {
   echo "❌ Failed to install zsh"
   exit 1
 }
