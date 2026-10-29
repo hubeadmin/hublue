@@ -21,6 +21,9 @@ brew "kubectl"      # Kubernetes CLI
 brew "yq"           # YAML processor
 brew "chezmoi"      # Dotfile manager
 
+# Terraform left homebrew-core after the license change; use HashiCorp's tap
+tap "hashicorp/tap"
+brew "hashicorp/tap/terraform"
+
 # Optional: Add more tools as needed
-# brew "terraform"  # Already installed via DNF
-# brew "go"         # Already installed in /usr/local/bin
+# brew "go"         # Prefer the go-dev distrobox (ujust create-go-toolbox)

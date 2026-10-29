@@ -8,19 +8,21 @@ install-brew:
     if ! command -v brew &> /dev/null; then
         echo "Installing Homebrew..."
         NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-        echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> ~/.bashrc
-        [ -f ~/.zshrc ] && echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> ~/.zshrc
         echo "✅ Homebrew installed"
     else
         echo "✅ Homebrew already installed"
     fi
+    for rc in ~/.bashrc ~/.zshrc; do
+        [ -f "$rc" ] || continue
+        grep -q "brew shellenv" "$rc" || echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> "$rc"
+    done
 
 # Install Homebrew packages from Brewfile
 [group('setup')]
 install-brew-packages:
     #!/usr/bin/bash
     set -euo pipefail
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
     if [ -f /usr/share/hublue/Brewfile ]; then
         echo "Installing Homebrew packages from Brewfile..."
         brew bundle --file=/usr/share/hublue/Brewfile
@@ -35,6 +37,7 @@ install-brew-packages:
 sync-brew-packages:
     #!/usr/bin/bash
     set -euo pipefail
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
     if [ -f /usr/share/hublue/Brewfile ]; then
         echo "Syncing Homebrew packages with Brewfile..."
         echo "This will:"
@@ -55,6 +58,7 @@ sync-brew-packages:
 [group('maintenance')]
 brew-cleanup-preview:
     #!/usr/bin/bash
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
     if [ -f /usr/share/hublue/Brewfile ]; then
         echo "Packages that would be removed (not in Brewfile):"
         brew bundle cleanup --file=/usr/share/hublue/Brewfile --dry-run
@@ -88,6 +92,7 @@ configure-shell:
     if [ -f ~/.zshrc ]; then
         cp ~/.zshrc ~/.zshrc.backup.$(date +%Y%m%d_%H%M%S) 2>/dev/null || true
 
+        grep -q "brew shellenv" ~/.zshrc || echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> ~/.zshrc
         grep -q "atuin init zsh" ~/.zshrc || echo 'eval "$(atuin init zsh)"' >> ~/.zshrc
         grep -q "starship init zsh" ~/.zshrc || echo 'eval "$(starship init zsh)"' >> ~/.zshrc
         grep -q "zoxide init zsh" ~/.zshrc || echo 'eval "$(zoxide init zsh)"' >> ~/.zshrc
@@ -116,6 +121,7 @@ configure-shell:
     if [ -f ~/.bashrc ]; then
         cp ~/.bashrc ~/.bashrc.backup.$(date +%Y%m%d_%H%M%S) 2>/dev/null || true
 
+        grep -q "brew shellenv" ~/.bashrc || echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> ~/.bashrc
         grep -q "atuin init bash" ~/.bashrc || echo 'eval "$(atuin init bash)"' >> ~/.bashrc
         grep -q "starship init bash" ~/.bashrc || echo 'eval "$(starship init bash)"' >> ~/.bashrc
         grep -q "zoxide init bash" ~/.bashrc || echo 'eval "$(zoxide init bash)"' >> ~/.bashrc
@@ -143,9 +149,14 @@ set-zsh-default:
 setup-lazyvim:
     #!/usr/bin/bash
     set -euo pipefail
+    if [ -f "$HOME/.config/nvim/lua/config/lazy.lua" ]; then
+        echo "✅ LazyVim already installed"
+        exit 0
+    fi
     if [ -d "$HOME/.config/nvim" ]; then
-        echo "Backing up existing nvim config to ~/.config/nvim.bak..."
-        mv ~/.config/nvim ~/.config/nvim.bak
+        backup="$HOME/.config/nvim.bak.$(date +%Y%m%d_%H%M%S)"
+        echo "Backing up existing nvim config to $backup..."
+        mv ~/.config/nvim "$backup"
     fi
     echo "Installing LazyVim starter..."
     git clone https://github.com/LazyVim/starter ~/.config/nvim
@@ -154,7 +165,7 @@ setup-lazyvim:
 
 # Complete first-time setup (all-in-one)
 [group('setup')]
-setup-user: install-brew install-omz install-brew-packages configure-shell setup-lazyvim
+setup-user: install-omz install-brew install-brew-packages configure-shell setup-lazyvim
     #!/usr/bin/bash
     echo ""
     echo "🎉 Hublue user setup complete!"
@@ -169,6 +180,7 @@ setup-user: install-brew install-omz install-brew-packages configure-shell setup
 update-user:
     #!/usr/bin/bash
     set -euo pipefail
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
     echo "Updating Homebrew packages..."
     brew update && brew upgrade
     echo "✅ Homebrew packages updated"
@@ -204,7 +216,7 @@ create-go-toolbox:
 [group('info')]
 list-hublue:
     @echo "Hublue Custom Commands:"
-    @just --list --justfile /usr/share/hublue/hublue.just
+    @just --list --justfile /usr/share/ublue-os/just/60-hublue.just
 
 # Interactive picker for ujust commands (TUI)
 [group('info')]
@@ -214,6 +226,6 @@ picker:
         ujust-picker
     else
         echo "❌ ujust-picker not installed"
-        echo "Install with: sudo dnf install -y ujust-picker"
+        echo "It ships with the Hublue image; update with: sudo bootc upgrade"
         exit 1
     fi

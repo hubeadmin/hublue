@@ -19,9 +19,9 @@ on:
     branches:
       - main
     paths:
-      - './iso.toml'
-      - './.github/workflows/build-iso.yml'
-      - './Justfile'
+      - 'iso.toml'
+      - '.github/workflows/build-iso.yml'
+      - 'Justfile'
 
 env:
   IMAGE_REGISTRY: "ghcr.io/${{ github.repository }}"
@@ -34,7 +34,8 @@ concurrency:
 jobs:
   build:
     name: Build ISOs
-    runs-on: ${{ inputs.platform == 'amd64' && 'ubuntu-24.04' || 'ubuntu-24.04-arm' }}
+    # inputs.platform is empty on pull_request, so default to amd64
+    runs-on: ${{ inputs.platform == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
     strategy:
       fail-fast: false
     permissions:
@@ -71,7 +72,7 @@ jobs:
         id: build
         uses: ublue-os/bootc-image-builder-action@main
         with:
-          bootc-image-builder-image: ghcr.io/centos-workstation/bootc-image-builder:latest
+          bootc-image-builder-image: quay.io/centos-bootc/bootc-image-builder:latest
           use-librepo: true
           config-file: ./iso.toml
           image: ${{ env.IMAGE_REGISTRY }}:${{ env.DEFAULT_TAG }}
